@@ -105,3 +105,26 @@ const calculateScore = (submission, assignment, latePenalty) => {
   }
   return score / maxScore;
 };
+
+// /* Throw an error if AssignmentGroup and course_id are mismatched
+//    letting user know that the input was invalid. */
+// Similarly, what if points_possible is 0?
+// What if a value we're expecting to be a number is instead a string?
+// Use try/catch and other logic to handle these types of errors gracefully.
+// Do not include assignments not yet due, in results or the average.
+// Late submissions deduct 10 percent of the ***total points possible***
+// Alter the data to test for edge cases, error handling, and other potential issues.*/
+
+// // CourseInfo =
+// //   { id: Number } == { course_id: Number }
+// //     ? "Celebrate, you submitted!"
+// //     : "Invalid input, please submit correct assignment";
+
+const validateCourseAssignment = (course, ag) => {
+  if (course.id !== ag.course_id) {
+    throw new Error(
+      "Invalid input, please submit within correct assignment group"
+    );
+  }
+  console.log("Celebrate, you did it!");
+};
