@@ -94,3 +94,14 @@ const isLate = (submittedAt, dueAt) => {
   }
   return submittedDate > dueDate;
 };
+
+// Error Handling - Late Penalty
+
+const calculateScore = (submission, assignment, latePenalty) => {
+  const maxScore = assignment.points_possible;
+  let score = submission.score;
+  if (latePenalty) {
+    score = Math.max(score - maxScore * 0.1, 0);
+  }
+  return score / maxScore;
+};
