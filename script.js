@@ -76,11 +76,6 @@ const LearnerSubmissions = [
   },
 ];
 
-/** find method returns the value of the first element in the array where predicate is true, and undefined otherwise.
- * find calls predicate once for each element of the array, in ascending order,
- * until it finds one where predicate returns true. If such an element is found,
- * find immediately returns that element value. Otherwise, find returns undefined. */
-
 // Error Handling  - Late Submission
 const isLate = (submittedAt, dueAt) => {
   const submittedDate = new Date(submittedAt);
@@ -96,7 +91,6 @@ const isLate = (submittedAt, dueAt) => {
 };
 
 // Error Handling - Late Penalty
-
 const calculateScore = (submission, assignment, latePenalty) => {
   const maxScore = assignment.points_possible;
   let score = submission.score;
@@ -106,19 +100,17 @@ const calculateScore = (submission, assignment, latePenalty) => {
   return score / maxScore;
 };
 
-// /* Throw an error if AssignmentGroup and course_id are mismatched
-//    letting user know that the input was invalid. */
 // Similarly, what if points_possible is 0?
 // What if a value we're expecting to be a number is instead a string?
-// Use try/catch and other logic to handle these types of errors gracefully.
 // Do not include assignments not yet due, in results or the average.
-// Late submissions deduct 10 percent of the ***total points possible***
-// Alter the data to test for edge cases, error handling, and other potential issues.*/
+// Alter the data to test for edge cases, error handling, and other potential issues.
 
+// Throw an error if AssignmentGroup and course_id are mismatched
+//    letting user know that the input was invalid
 // // CourseInfo =
 // //   { id: Number } == { course_id: Number }
 // //     ? "Celebrate, you submitted!"
-// //     : "Invalid input, please submit correct assignment";
+// //     : "Invalid input, please submit within correct assignment group";
 
 const validateCourseAssignment = (course, ag) => {
   if (course.id !== ag.course_id) {
@@ -128,6 +120,8 @@ const validateCourseAssignment = (course, ag) => {
   }
   console.log("Celebrate, you did it!");
 };
+
+// The find method returns the value of the first element in the array that evaluates to true, which is otherwise evaluated as undefined - Predicates once for each element of the array in ascending order,
 
 function getLearnerData(course, ag, studentSubmission) {
   validateCourseAssignment(course, ag);
@@ -141,6 +135,7 @@ function getLearnerData(course, ag, studentSubmission) {
         acc[learnerId] = { id: learnerId, finalScore: 0, totalWeight: 0 };
       }
 
+      // 10% Deduction of Total Score Possible for Late Submission
       const late = isLate(
         submission.submission.submitted_at,
         assignment.due_at
