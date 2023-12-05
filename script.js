@@ -128,3 +128,54 @@ const validateCourseAssignment = (course, ag) => {
   }
   console.log("Celebrate, you did it!");
 };
+
+function getLearnerData(course, ag, studentSubmission) {
+  validateCourseAssignment(course, ag);
+  const learners = studentSubmission.reduce((acc, submission) => {
+    const assignment = ag.assignments.find(
+      (a) => a.id === submission.assignment_id
+    );
+    if (assignment && new Date() >= new Date(assignment.due_at)) {
+      const learnerId = submission.learner_id;
+      if (!acc[learnerId]) {
+        acc[learnerId] = { id: learnerId, finalScore: 0, totalWeight: 0 };
+      }
+
+      const late = isLate(
+        submission.submission.submitted_at,
+        assignment.due_at
+      );
+      const adjustedScore =
+        calculateScore(submission.submission, assignment, late) *
+        ag.group_weight;
+      acc[learnerId].finalScore += adjustedScore;
+      acc[learnerId].totalWeight += ag.group_weight;
+    }
+    return acc;
+  }, {});
+
+  // Calculate averages and format result
+  return Object.values(learners).map((learner) => {
+    const averageScore =
+      learner.totalWeight > 0 ? learner.finalScore / learner.totalWeight : 0;
+    console.log(
+      "Learner ID: ",
+      learner.id,
+      "Average Score: ",
+      averageScore.toFixed(2)
+    );
+    return {
+      id: learner.id,
+      averageScore: averageScore,
+    };
+  });
+}
+console.log(getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions));
+
+try {
+  validateCourseAssignment(CourseInfo, AssignmentGroup);
+} catch (error) {
+  console.error(error.message);
+}
+//learnerEachSubmission(125);
+//learnerEachSubmission(132);
