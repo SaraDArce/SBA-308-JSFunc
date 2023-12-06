@@ -17,18 +17,7 @@ const AssignmentGroup = {
       due_at: "2023-01-25",
       points_possible: 50,
     },
-    {
-      id: 2,
-      name: "Write a Function",
-      due_at: "2023-02-27",
-      points_possible: 150,
-    },
-    {
-      id: 3,
-      name: "Code the World",
-      due_at: "3156-11-15",
-      points_possible: 500,
-    },
+    // ... (other assignments)
   ],
 };
 
@@ -79,7 +68,10 @@ const validateCourseAssignment = (course, ag) => {
 function getLearnerData(course, ag, studentSubmission) {
   validateCourseAssignment(course, ag);
 
-  const learners = studentSubmission.reduce((acc, submission) => {
+  const learners = {};
+
+  for (let i = 0; i < studentSubmission.length; i++) {
+    const submission = studentSubmission[i];
     const assignment = ag.assignments.find(
       (a) => a.id === submission.assignment_id
     );
@@ -87,8 +79,8 @@ function getLearnerData(course, ag, studentSubmission) {
     if (assignment && new Date() >= new Date(assignment.due_at)) {
       const learnerId = submission.learner_id;
 
-      if (!acc[learnerId]) {
-        acc[learnerId] = { id: learnerId, finalScore: 0, totalWeight: 0 };
+      if (!learners[learnerId]) {
+        learners[learnerId] = { id: learnerId, finalScore: 0, totalWeight: 0 };
       }
 
       const late = isLate(
@@ -99,24 +91,23 @@ function getLearnerData(course, ag, studentSubmission) {
         calculateScore(submission.submission, assignment, late) *
         ag.group_weight;
 
-      acc[learnerId].finalScore += adjustedScore;
-      acc[learnerId].totalWeight += ag.group_weight;
+      learners[learnerId].finalScore += adjustedScore;
+      learners[learnerId].totalWeight += ag.group_weight;
     }
-    return acc;
-  }, {});
+  }
 
-  const learnerAverages = Object.values(learners).map((learner) => {
+  const learnerAverages = [];
+
+  for (const learnerId in learners) {
+    const learner = learners[learnerId];
     const averageScore =
       learner.totalWeight > 0 ? learner.finalScore / learner.totalWeight : 0;
 
     console.log(
       `Learner ID: ${learner.id} - Average Score: ${averageScore.toFixed(2)}`
     );
-    return {
-      id: learner.id,
-      averageScore: averageScore,
-    };
-  });
+    learnerAverages.push({ id: learner.id, averageScore: averageScore });
+  }
 
   return learnerAverages;
 }
